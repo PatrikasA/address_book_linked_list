@@ -20,7 +20,8 @@ void displaySearchOptions(struct LinkedList* lp)
     while(1)
     {
         int option;
-        char* enteredValue;
+        char enteredValue[20];
+        struct Node* foundElement = NULL;
         printf("1. Rasti pagal vardą\n");
         printf("2. Rasti pagal pavardę\n");
         printf("3. Rasti pagal el. paštą\n");
@@ -41,13 +42,16 @@ void displaySearchOptions(struct LinkedList* lp)
             findBySurname(lp, enteredValue);
             break;
         case 3:
-            printf("Įveskite el. paštą: ");
-            scanf("%s", enteredValue);
-            findByEmail(lp, enteredValue);
+            printf("Įveskite el. paštą: \n");
+            scanf("%s",enteredValue);
+            printf("%s\n", enteredValue);
+            printf("Pasiekta\n");
+            foundElement = findByEmail(lp, enteredValue);
             break;
         case 4:
             printf("Įveskite tel. numerį: ");
             scanf("%s", enteredValue);
+            findByPhone(lp, enteredValue);
             break;
         case 5:
             return;

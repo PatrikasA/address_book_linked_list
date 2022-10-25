@@ -34,7 +34,7 @@ void insertAtPosition(struct LinkedList* lp, struct Node* element, int position)
 void removeFromTail(struct LinkedList* lp);
 void removeFromHead(struct LinkedList* lp);
 void removeAtPosition(struct LinkedList* lp, int position);
-struct Node* findByEmail(struct LinkedList* lp, char* email);
+struct Node* findByEmail(struct LinkedList* lp, char email[20]);
 struct Node* findByName(struct LinkedList* lp, char* name);
 struct Node* findBySurname(struct LinkedList* lp, char* surname);
 struct Node* findByPhone(struct LinkedList* lp, char* phone);

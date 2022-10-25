@@ -6,6 +6,11 @@ void initializeList(struct LinkedList* listptr )
     listptr->tail = NULL;
     listptr->numberOfElements = 0;
 }
+
+void displayNode(struct Node* node)
+{
+    printf("%s %s %s %s",node->data->name, node->data->surname, node->data->phone, node->data->email);
+}
  
 void display(struct LinkedList* lp)
 {
@@ -167,9 +172,12 @@ void removeAtPosition(struct LinkedList* lp, int position)
  
 }
 
-struct Node* findByEmail(struct LinkedList* lp, char* email)
+struct Node* findByEmail(struct LinkedList* lp, char email[20])
 {
+    printf("Pasiekta");
     struct Node* temp = lp->head;
+    if(temp == NULL)
+        printf("Sąrašas tuščias");
     while(temp->next != lp->tail)
     {
         temp = temp->next;
