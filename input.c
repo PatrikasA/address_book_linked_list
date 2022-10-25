@@ -1,0 +1,1 @@
+#define FILE_NAME "duom.txt";
