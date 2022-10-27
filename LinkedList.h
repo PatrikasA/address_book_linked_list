@@ -15,7 +15,7 @@ struct Data
 
 struct Node
 {
-    struct Data* data;
+    struct Data data;
     struct Node* next;
 };
  
@@ -28,9 +28,8 @@ struct LinkedList
 
 void initializeList(struct LinkedList* listptr );
 void display(struct LinkedList* lp);
-void addToStart(struct LinkedList* lp, struct Node* element);
-void addToEnd(struct LinkedList* lp, struct Node* element);
-void insertAtPosition(struct LinkedList* lp, struct Node* element, int position);
+void addToEnd(struct LinkedList* lp, struct Data data);
+void insertAtPosition(struct LinkedList* lp, struct Data data, int position);
 void removeFromTail(struct LinkedList* lp);
 void removeFromHead(struct LinkedList* lp);
 void removeAtPosition(struct LinkedList* lp, int position);

@@ -2,19 +2,20 @@
 
 void initializeList(struct LinkedList* listptr )
 {
-    listptr->head = NULL;
-    listptr->tail = NULL;
+    listptr->head = malloc(sizeof(struct Node));
+    listptr->tail = malloc(sizeof(struct Node));
+    listptr->head->next = listptr->tail;
     listptr->numberOfElements = 0;
 }
 
 void displayNode(struct Node* node)
 {
-    printf("%s %s %s %s",node->data->name, node->data->surname, node->data->phone, node->data->email);
+    printf("%s %s %s %s",node->data.name, node->data.surname, node->data.phone, node->data.email);
 }
  
 void display(struct LinkedList* lp)
 {
-    if(lp->head == NULL)
+    if(lp->head->next == lp->tail)
     {
         printf("Adresu knygele tuscia\n");
     }
@@ -22,46 +23,29 @@ void display(struct LinkedList* lp)
     {
         struct Node* current = lp->head;
         printf("Saraso elementai:");
-        while(current!=NULL)
+        while(current!=lp->tail) // TEST IF THIS SHOUD BE current->next
         {
-            printf("%s %s %s %s",current->data->name, current->data->surname, current->data->phone, current->data->email);
+            displayNode(current);
             current=current->next;
         }
     }
 }
  
-void addToStart(struct LinkedList* lp, struct Node* element)
+ 
+void addToEnd(struct LinkedList* lp, struct Data data)
 {
-	//if list is empty.
-	if(lp->head == NULL)
-	{
-		lp->head = element;
-		lp->tail = element;
-	}
-	else
-	{
-		element->next = lp->head;
-		lp->head = element;
-	}		
+    struct Node* current = lp -> head;
+    while(current -> next != lp -> tail)
+    {
+        current = current ->next;
+    }
+
+    current -> next = malloc(sizeof(struct Node));
+    current -> next ->data = data;
+    current -> next -> next = lp ->tail;
 }
  
-void addToEnd(struct LinkedList* lp, struct Node* element)
-{
- 
-    // if list is empty
-    if(lp -> head == NULL)
-    {
-        lp -> head = element;
-        lp -> tail = element;
-    }
-    else
-    {
-        lp -> tail -> next = element;
-        lp -> tail = lp -> tail -> next;
-    }
-}
- 
-void insertAtPosition(struct LinkedList* lp, struct Node* element, int position)
+void insertAtPosition(struct LinkedList* lp, struct Data data, int position)
 {
     //sanity check
     if(position <= 0 || position > lp->numberOfElements+1)
@@ -71,102 +55,87 @@ void insertAtPosition(struct LinkedList* lp, struct Node* element, int position)
     //if we need to append element to end of list
     else if(position == lp ->numberOfElements+1)
     {
-        addToEnd(lp,element);
-    }
-    //if element needs to be added to start of list
-    else if(position==1)
-    {
-        addToStart(lp,element);
+        addToEnd(lp,data);
     }
     //if we need to insert element somewhere else
     else
     {
-        struct Node* temp = lp->head;
-        int i = 0;
-        while(i<=position)
+        struct Node* current = lp -> head;
+
+        for(int i =0; i < position; i++)
         {
-            if(temp -> next != NULL)
-            {
-                temp = temp -> next;
-            }
+            current = current->next;
+            if(current == lp ->tail)
+                break;
         }
- 
-        element->next = temp->next;
-        temp->next = element;
+
+        struct Node* temp = current -> next;
+        current -> next = malloc(sizeof(struct Node));
+        current -> next -> data = data;
+        current -> next -> next = temp; 
     }
 }
  
-void removeFromTail(struct LinkedList* lp)
-{
-	struct Node* temp;
+// void removeFromTail(struct LinkedList* lp)
+// {
+// 	struct Node* temp;
  
-	if(lp->tail == NULL)
-	{	
-	    printf("Sarasas tuscias\n");
-	}
-	else
-	{
-		temp = lp->head;
+// 	if(lp->tail == NULL)
+// 	{	
+// 	    printf("Sarasas tuscias\n");
+// 	}
+// 	else
+// 	{
+// 		temp = lp->head;
  
-		while(temp->next != lp->tail)
-		{ temp = temp->next;}
+// 		while(temp->next != lp->tail)
+// 		{ temp = temp->next;}
  
  
-		lp->tail = temp;
-        free(lp->tail->next); 
-		lp->tail->next = NULL;		
-	}	
-}
+// 		lp->tail = temp;
+//         free(lp->tail->next); 
+// 		lp->tail->next = NULL;		
+// 	}	
+// }
  
-void removeFromHead(struct LinkedList* lp)
-{
-    if(lp->head == NULL)
-	{	
-		printf("Sarasas tuscias\n"); 	
-	}
-	else
-	{
-        struct Node* tmp = lp->head;
-		lp->head = lp->head->next;
-        free(tmp);		
-	}	
-}
+// void removeFromHead(struct LinkedList* lp)
+// {
+//     if(lp->head == lp->tail)
+// 	{	
+// 		printf("Sarasas tuscias\n"); 	
+// 	}
+// 	else
+// 	{
+//         struct Node* tmp = lp->head;
+// 		lp->head = lp->head->next;
+//         free(tmp);		
+// 	}	
+// }
  
 void removeAtPosition(struct LinkedList* lp, int position)
 {
     //sanity checks
-    if(lp->head == NULL)
+    if(lp->head->next == lp->tail)
     {
-        printf("Sarasas tuscias. Salinimas negalimas.\n");
+        printf("Sąrašas tuščias. Šalinimas negalimas.\n");
     }
     else if(position <= 0 || position > lp->numberOfElements)
     {
-        printf("Ivestas neteisingas indeksas\n");
+        printf("Įvestas neteisingas indeksas\n");
     }
-    //if we need to remove at end of list
-    else if(position == lp->numberOfElements)
-    {
-        removeFromTail(lp);
-    }
-    //if we need to remove at start of list
-    else if(position == 1)
-    {
-        removeFromHead(lp);
-    }
-    //if we need to remove somewhere else
+    //if we can remove
     else
     {
-        int i = 0;
         struct Node* temp = lp->head;
-        while(i<=position)
+        for(int i=0; i<position; i++)
         {
-            if(temp -> next != NULL)
-            {
-                temp = temp -> next;
-            }
+            temp = temp ->next;
+            if(temp = lp ->tail)
+                break;
         }
-        struct Node* nodeToFree = temp -> next;
-        temp -> next = temp -> next -> next;
+
+        struct Node* nodeToFree = temp ->next;
+        temp ->next = temp ->next ->next;
         free(nodeToFree);
     }
  
@@ -174,52 +143,73 @@ void removeAtPosition(struct LinkedList* lp, int position)
 
 struct Node* findByEmail(struct LinkedList* lp, char email[20])
 {
-    printf("Pasiekta");
     struct Node* temp = lp->head;
-    if(temp == NULL)
-        printf("Sąrašas tuščias");
+    if(temp->next == lp->tail)
+    {
+        printf("Sąrašas tuščias\n");
+        return NULL;
+    }
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data->email, email) == 0)
+        if(strcmp(temp->data.email, email) == 0)
             return temp;
     }
+    printf("Įrašas nerastas");
     return NULL;
 }
 
 struct Node* findByPhone(struct LinkedList* lp, char* phone)
 {
     struct Node* temp = lp->head;
+    if(temp->next == lp->tail)
+    {
+        printf("Sąrašas tuščias\n");
+        return NULL;
+    }
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data->phone, phone) == 0)
+        if(strcmp(temp->data.phone, phone) == 0)
             return temp;
     }
+    printf("Įrašas nerastas");
     return NULL;
 }
 
 struct Node* findByName(struct LinkedList* lp, char* name)
 {
     struct Node* temp = lp->head;
+    if(temp->next == lp->tail)
+    {
+        printf("Sąrašas tuščias\n");
+        return NULL;
+    }
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data->name, name) == 0)
+        if(strcmp(temp->data.name, name) == 0)
             return temp;
     }
+    printf("Įrašas nerastas");
     return NULL;
 }
 
 struct Node* findBySurname(struct LinkedList* lp, char* surname)
 {
     struct Node* temp = lp->head;
+    if(temp->next == lp->tail)
+    {
+        printf("Sąrašas tuščias\n");
+        return NULL;
+    }
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data->surname, surname) == 0)
+        if(strcmp(temp->data.surname, surname) == 0)
             return temp;
     }
+    printf("Įrašas nerastas");
     return NULL;
 }
  
@@ -247,11 +237,11 @@ struct Node* findByIndex(struct LinkedList* lp, int index)
  
 void deleteWholeList(struct LinkedList* lp)
 {
-    struct Node *curr = lp->head->next;
-    while (curr->next != lp->tail)
+    struct Node *current = lp->head->next;
+    while (current->next != lp->tail)
     {
-       struct Node *tmp = curr;
-       curr = curr->next;
+       struct Node *tmp = current;
+       current = current->next;
        free(tmp);
     }
    lp->head->next = lp->tail;    
