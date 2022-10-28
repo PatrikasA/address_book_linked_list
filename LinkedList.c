@@ -127,7 +127,7 @@ void removeAtPosition(struct LinkedList* lp, int position)
     }
 }
 
-struct Node* findByEmail(struct LinkedList* lp, char email[20])
+struct Node* findByEmail(struct LinkedList* lp, char* email)
 {
     struct Node* temp = lp->head;
     if(temp->next == lp->tail)
