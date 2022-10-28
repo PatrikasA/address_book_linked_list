@@ -10,10 +10,10 @@ void initializeList(struct LinkedList* listptr )
 
 void displayNode(struct Node* node)
 {
-    printf("%s %s %s %s",node->data.name, node->data.surname, node->data.phone, node->data.email);
+    printf("%s %s %s %s\n",node->data->name, node->data->surname, node->data->phone, node->data->email);
 }
  
-void display(struct LinkedList* lp)
+void display(struct LinkedList* lp, int number)
 {
     if(lp->head->next == lp->tail)
     {
@@ -22,47 +22,48 @@ void display(struct LinkedList* lp)
     else
     {
         struct Node* current = lp->head;
-        printf("Saraso elementai:");
-        while(current!=lp->tail) // TEST IF THIS SHOUD BE current->next
+        int i = 1; //used to display indexes
+        int j = 0; //used to display a limited number of entries
+        printf("Sąrašo elementai:\n");
+        while(current->next!=lp->tail)
         {
-            displayNode(current);
+            if(number != -1 && j >= number)
+                return;
             current=current->next;
+            printf("%d. ",i);
+            displayNode(current);
+            i++;
+            j++;
         }
     }
 }
  
  
-void addToEnd(struct LinkedList* lp, struct Data data)
+void addToEnd(struct LinkedList* lp, struct Data* data)
 {
     struct Node* current = lp -> head;
     while(current -> next != lp -> tail)
     {
         current = current ->next;
     }
-
+    
     current -> next = malloc(sizeof(struct Node));
     current -> next ->data = data;
-    current -> next -> next = lp ->tail;
+    current -> next -> next = lp -> tail;
+    lp ->numberOfElements++;
 }
  
-void insertAtPosition(struct LinkedList* lp, struct Data data, int position)
+void insertAtPosition(struct LinkedList* lp, struct Data* data, int position)
 {
-    //sanity check
     if(position <= 0 || position > lp->numberOfElements+1)
     {
         printf("Ivestas neteisingas indeksas\n");
     }
-    //if we need to append element to end of list
-    else if(position == lp ->numberOfElements+1)
-    {
-        addToEnd(lp,data);
-    }
-    //if we need to insert element somewhere else
     else
     {
         struct Node* current = lp -> head;
 
-        for(int i =0; i < position; i++)
+        for(int i =0; i < position-1; i++)
         {
             current = current->next;
             if(current == lp ->tail)
@@ -73,72 +74,57 @@ void insertAtPosition(struct LinkedList* lp, struct Data data, int position)
         current -> next = malloc(sizeof(struct Node));
         current -> next -> data = data;
         current -> next -> next = temp; 
+        lp -> numberOfElements++;
     }
 }
  
-// void removeFromTail(struct LinkedList* lp)
-// {
-// 	struct Node* temp;
- 
-// 	if(lp->tail == NULL)
-// 	{	
-// 	    printf("Sarasas tuscias\n");
-// 	}
-// 	else
-// 	{
-// 		temp = lp->head;
- 
-// 		while(temp->next != lp->tail)
-// 		{ temp = temp->next;}
- 
- 
-// 		lp->tail = temp;
-//         free(lp->tail->next); 
-// 		lp->tail->next = NULL;		
-// 	}	
-// }
- 
-// void removeFromHead(struct LinkedList* lp)
-// {
-//     if(lp->head == lp->tail)
-// 	{	
-// 		printf("Sarasas tuscias\n"); 	
-// 	}
-// 	else
-// 	{
-//         struct Node* tmp = lp->head;
-// 		lp->head = lp->head->next;
-//         free(tmp);		
-// 	}	
-// }
  
 void removeAtPosition(struct LinkedList* lp, int position)
 {
-    //sanity checks
-    if(lp->head->next == lp->tail)
-    {
-        printf("Sąrašas tuščias. Šalinimas negalimas.\n");
-    }
-    else if(position <= 0 || position > lp->numberOfElements)
+    struct Node* temp = lp -> head; 
+    int i;
+    if(position < 1 || position > lp -> numberOfElements)
     {
         printf("Įvestas neteisingas indeksas\n");
+        return;
     }
-    //if we can remove
-    else
+    if (position == 1) {
+        lp->head = lp->head->next; 
+        temp->next = NULL;
+        free(temp);
+        lp->numberOfElements--;
+        printf("Sėkmingai panaikinta\n");
+        return;
+    }
+    else if(position==lp->numberOfElements)
     {
         struct Node* temp = lp->head;
-        for(int i=0; i<position; i++)
+        while(temp->next != lp->tail)
         {
-            temp = temp ->next;
-            if(temp = lp ->tail)
-                break;
+            temp = temp->next;
+
         }
 
-        struct Node* nodeToFree = temp ->next;
-        temp ->next = temp ->next ->next;
-        free(nodeToFree);
+        lp->tail = temp;
+        temp = temp ->next;
+        free(temp);
+        lp->numberOfElements--;
+        printf("Sėkmingai panaikinta\n");
+        return;
+    } 
+    else
+    {
+        for (i = 1; i < position; i++) {
+            temp = temp->next;
+        }
+        struct Node* del
+            = temp->next;
+        temp->next = temp->next->next;
+        free(del);
+        lp->numberOfElements--;
+        printf("Sėkmingai panaikinta\n");
+        return;
     }
- 
 }
 
 struct Node* findByEmail(struct LinkedList* lp, char email[20])
@@ -152,10 +138,10 @@ struct Node* findByEmail(struct LinkedList* lp, char email[20])
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data.email, email) == 0)
+        if(strcmp(temp->data->email, email) == 0)
             return temp;
     }
-    printf("Įrašas nerastas");
+    printf("Įrašas nerastas\n");
     return NULL;
 }
 
@@ -170,10 +156,10 @@ struct Node* findByPhone(struct LinkedList* lp, char* phone)
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data.phone, phone) == 0)
+        if(strcmp(temp->data->phone, phone) == 0)
             return temp;
     }
-    printf("Įrašas nerastas");
+    printf("Įrašas nerastas\n");
     return NULL;
 }
 
@@ -188,10 +174,10 @@ struct Node* findByName(struct LinkedList* lp, char* name)
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data.name, name) == 0)
+        if(strcmp(temp->data->name, name) == 0)
             return temp;
     }
-    printf("Įrašas nerastas");
+    printf("Įrašas nerastas\n");
     return NULL;
 }
 
@@ -206,23 +192,24 @@ struct Node* findBySurname(struct LinkedList* lp, char* surname)
     while(temp->next != lp->tail)
     {
         temp = temp->next;
-        if(strcmp(temp->data.surname, surname) == 0)
+        if(strcmp(temp->data->surname, surname) == 0)
             return temp;
     }
-    printf("Įrašas nerastas");
+    printf("Įrašas nerastas\n");
     return NULL;
 }
  
 struct Node* findByIndex(struct LinkedList* lp, int index)
 {
-    //sanity checks
-    if(lp->head == NULL)
+    if(lp->head == lp->tail)
     {
-        printf("Sarasas yra tuscias");
+        printf("Sąrašas yra tuščias\n");
+        return NULL;
     }
-    if(index < 0 || index > lp -> numberOfElements)
+    if(index < 1 || index > (lp -> numberOfElements))
     {
-        printf("Ivestas neteisingas indeksas");
+        printf("Įvestas neteisingas indeksas\n");
+        return NULL;
     }
     else
     {
@@ -244,5 +231,6 @@ void deleteWholeList(struct LinkedList* lp)
        current = current->next;
        free(tmp);
     }
-   lp->head->next = lp->tail;    
+   lp->head->next = lp->tail;
+   lp ->numberOfElements = 0;    
 }

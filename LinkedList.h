@@ -7,15 +7,15 @@
 
 struct Data
 {
-    char name[20];
-    char surname[20];
-    char phone[8];
-    char email[40];
+    char* name;
+    char* surname;
+    char* phone;
+    char* email;
 };
 
 struct Node
 {
-    struct Data data;
+    struct Data* data;
     struct Node* next;
 };
  
@@ -27,9 +27,10 @@ struct LinkedList
 };
 
 void initializeList(struct LinkedList* listptr );
-void display(struct LinkedList* lp);
-void addToEnd(struct LinkedList* lp, struct Data data);
-void insertAtPosition(struct LinkedList* lp, struct Data data, int position);
+void display(struct LinkedList* lp, int number);
+void displayNode(struct Node* node);
+void addToEnd(struct LinkedList* lp, struct Data* data);
+void insertAtPosition(struct LinkedList* lp, struct Data* data, int position);
 void removeFromTail(struct LinkedList* lp);
 void removeFromHead(struct LinkedList* lp);
 void removeAtPosition(struct LinkedList* lp, int position);
