@@ -1,24 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+#include <unistd.h>
 #include "LinkedList.h"
 
  
 void enterData();
 void displayOptions();
 void awaitUserPrompt();
-void inputDataFromFile(struct LinkedList* lp);
- 
-int main()
+void inputDataFromFile(struct Node* head);
+int signalStop = 1;
+
+void sig_handler(int signum)
 {
-    struct LinkedList addressBook;
-    initializeList(&addressBook);
-    inputDataFromFile(&addressBook);
-    display(&addressBook, 10);
-    displayOptions(&addressBook);
+    signalStop = 0;
+    return;
 }
 
-void inputDataFromFile(struct LinkedList* lp)
+int main()
+{
+    struct Node list;
+    list.next = NULL;
+    signal(SIGINT, sig_handler);
+    //inputDataFromFile(&list);
+    printf("CIA YRA PIRMAS ELELEMTAS HEAD ");
+    //displayNode(&list);
+    display(&list, 10);
+    displayOptions(&list);
+}
+
+void inputDataFromFile(struct Node* head)
 {
     char *token;
     char buffer[255];
@@ -27,7 +39,7 @@ void inputDataFromFile(struct LinkedList* lp)
 
     for(int i=0; i<12; i++)
     {
-        struct Data* data = malloc(sizeof(struct Data));
+        struct Node* data = (struct Node *)malloc(sizeof(struct Node));
         fscanf(file, "%s", buffer);
 
         token = strtok(buffer, ";");
@@ -46,14 +58,15 @@ void inputDataFromFile(struct LinkedList* lp)
         data->phone = malloc(strlen(token)*sizeof(char));
         strcpy(data->phone, token);
 
-        addToEnd(lp, data);
+        data->next=NULL;
+        addToEnd(head, data);
     }
 }
 
-void enterData(struct LinkedList* lp, int index)
+void enterData(struct Node* head, int index)
 {
     char token[20];
-    struct Data* data = malloc(sizeof(struct Data));
+    struct Node* data = malloc(sizeof(struct Node));
 
     printf("Įveskite vardą: ");
     scanf("%s", token);
@@ -76,12 +89,12 @@ void enterData(struct LinkedList* lp, int index)
     strcpy(data->phone, token);
 
     if(index == -1)
-        addToEnd(lp, data);
+        addToEnd(head, data);
     else
-        insertAtPosition(lp, data, index);
+        insertAtPosition(head, data, index);
 }
 
-void displaySearchOptions(struct LinkedList* lp)
+void displaySearchOptions(struct Node* head)
 {
     while(1)
     {
@@ -100,22 +113,22 @@ void displaySearchOptions(struct LinkedList* lp)
         case 1:
             printf("Įveskite vardą: ");
             scanf("%s", enteredValue);
-            foundElement = findByName(lp, enteredValue);
+            foundElement = findByName(head, enteredValue);
             break;
         case 2:
             printf("Įveskite pavardę: ");
             scanf("%s", enteredValue);
-            foundElement = findBySurname(lp, enteredValue);
+            foundElement = findBySurname(head, enteredValue);
             break;
         case 3:
             printf("Įveskite el. paštą: ");
             scanf("%s",enteredValue);
-            foundElement = findByEmail(lp, enteredValue);
+            foundElement = findByEmail(head, enteredValue);
             break;
         case 4:
             printf("Įveskite tel. numerį: ");
             scanf("%s", enteredValue);
-            foundElement = findByPhone(lp, enteredValue);
+            foundElement = findByPhone(head, enteredValue);
             break;
         case 5:
             return;
@@ -125,19 +138,20 @@ void displaySearchOptions(struct LinkedList* lp)
         awaitUserPrompt();
             break;
         }
-        if(foundElement!=NULL)
-            displayNode(foundElement);
+        if(foundElement !=NULL)
+            if(foundElement!=NULL)
+                displayNode(foundElement);
     }
 }
  
-void displayOptions(struct LinkedList* lp)
+void displayOptions(struct Node* head)
 {
     printf("ADRESŲ KNYGELĖ\n");
     while(1)
     {
         int option;
         int index;
-        struct Data data;
+        struct Node data;
         struct Node* foundElement = malloc(sizeof(struct Node));
         printf("1. Peržiūrėti visą sąrašą\n");
         printf("2. Pridėti naują kontaktą į galą\n");
@@ -152,42 +166,43 @@ void displayOptions(struct LinkedList* lp)
         switch(option)
         {
             case 1:
-                display(lp, -1);
+                display(head, -1);
                 awaitUserPrompt();
                 break;
             case 2:
-                enterData(lp, -1);
+                enterData(head, -1);
                 awaitUserPrompt();
                 break;
             case 3:
                 printf("Įveskite indeksą: ");
                 scanf("%d", &index);
                 if(index > 0)
-                enterData(lp, index);
+                enterData(head, index);
                 awaitUserPrompt();
                 break;                
             case 4:
                 printf("Įveskite indeksą: ");
                 scanf("%d",&index);
-                removeAtPosition(lp, index);
+                removeAtPosition(head, index);
                 awaitUserPrompt();
                 break;
             case 5:
-                deleteWholeList(lp);
+                deleteWholeList(head);
                 awaitUserPrompt();
                 break;
             case 6:
                 printf("Įveskite indeksą: ");
                 scanf("%d",&index);
-                foundElement = findByIndex(lp, index);
+                foundElement = findByIndex(head, index);
                 if(foundElement != NULL)
                     displayNode(foundElement);
                 awaitUserPrompt();
                 break;
             case 7:
-                displaySearchOptions(lp);
+                displaySearchOptions(head);
                 break;
             case 8:
+                deleteWholeList(head);
                 return;
             default:
                 printf("Įvyko klaida. bandykite dar kartą.\n");

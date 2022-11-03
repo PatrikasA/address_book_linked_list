@@ -5,40 +5,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Data
+struct Node
 {
     char* name;
     char* surname;
     char* phone;
     char* email;
-};
-
-struct Node
-{
-    struct Data* data;
     struct Node* next;
 };
- 
-struct LinkedList
-{
-    struct Node* head;
-    struct Node* tail;
-    int numberOfElements;
-};
 
-void initializeList(struct LinkedList* listptr );
-void display(struct LinkedList* lp, int number);
+
+void display(struct Node* head, int number);
 void displayNode(struct Node* node);
-void addToEnd(struct LinkedList* lp, struct Data* data);
-void insertAtPosition(struct LinkedList* lp, struct Data* data, int position);
-void removeFromTail(struct LinkedList* lp);
-void removeFromHead(struct LinkedList* lp);
-void removeAtPosition(struct LinkedList* lp, int position);
-struct Node* findByEmail(struct LinkedList* lp, char* email);
-struct Node* findByName(struct LinkedList* lp, char* name);
-struct Node* findBySurname(struct LinkedList* lp, char* surname);
-struct Node* findByPhone(struct LinkedList* lp, char* phone);
-struct Node* findByIndex(struct LinkedList* lp, int index);
-void deleteWholeList(struct LinkedList* lp);
+void addToEnd(struct Node* head, struct Node* data);
+void insertAtPosition(struct Node* head, struct Node* data, int position);
+void removeFromTail(struct Node* head);
+void removeFromHead(struct Node* head);
+void removeAtPosition(struct Node* head, int position);
+struct Node* findByEmail(struct Node* head, char* email);
+struct Node* findByName(struct Node* head, char* name);
+struct Node* findBySurname(struct Node* head, char* surname);
+struct Node* findByPhone(struct Node* head, char* phone);
+struct Node* findByIndex(struct Node* head, int index);
+void deleteWholeList(struct Node* head);
 
 #endif
