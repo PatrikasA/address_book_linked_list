@@ -6,26 +6,31 @@
 #include "LinkedList.h"
 
  
-void enterData();
-void displayOptions();
+void enterData(struct Node* head, struct Node* tail, int index);
+void displayOptions(struct Node* head, struct Node* tail);
+void displaySearchOptions(struct Node* head, struct Node* tail);
 void awaitUserPrompt();
 void inputDataFromFile(struct Node* head, struct Node* tail);
-int signalStop = 1;
+volatile int signalStop = 1;
 
 void sig_handler(int signum)
 {
     signalStop = 0;
-    return;
+    fclose(stdin);
 }
 
 int main()
 {
+    signal(SIGINT, sig_handler);
+
     struct Node *head, *tail;
     init_list(&head, &tail);
-    signal(SIGINT, sig_handler);
-    //inputDataFromFile(head,tail);
+    inputDataFromFile(head,tail);
     display(head,tail, 10);
-    displayOptions(head,tail);
+    displayOptions(head, tail);
+    deleteWholeList(head, tail);
+    free(head);
+    free(tail);
 }
 
 void inputDataFromFile(struct Node* head, struct Node* tail)
@@ -41,24 +46,25 @@ void inputDataFromFile(struct Node* head, struct Node* tail)
         fscanf(file, "%s", buffer);
 
         token = strtok(buffer, ";");
-        data->name = malloc(strlen(token)*sizeof(char));
+        //data->name = malloc(strlen(token)*sizeof(char));
         strcpy(data->name, token);
 
         token = strtok(NULL, ";");  
-        data->surname = malloc(strlen(token)*sizeof(char));
+        //data->surname = malloc(strlen(token)*sizeof(char));
         strcpy(data->surname, token);
 
         token = strtok(NULL, ";");
-        data->email = malloc(strlen(token)*sizeof(char));
+        //data->email = malloc(strlen(token)*sizeof(char));
         strcpy(data->email, token);
 
         token = strtok(NULL, ";");
-        data->phone = malloc(strlen(token)*sizeof(char));
+        //data->phone = malloc(strlen(token)*sizeof(char));
         strcpy(data->phone, token);
 
         data->next=NULL;
         addToEnd(head, tail, data);
     }
+    fclose(file);
 }
 
 void enterData(struct Node* head, struct Node* tail, int index)
@@ -68,36 +74,33 @@ void enterData(struct Node* head, struct Node* tail, int index)
 
     printf("Įveskite vardą: ");
     scanf("%s", token);
-    data->name = malloc(strlen(token)*sizeof(char));
+    //data->name = malloc(strlen(token)*sizeof(char));
     strcpy(data->name, token);
 
     printf("Įveskite pavardę: ");
     scanf("%s", token);
-    data->surname = malloc(strlen(token)*sizeof(char));
+    //data->surname = malloc(strlen(token)*sizeof(char));
     strcpy(data->surname, token);
 
     printf("Įveskite el. paštą: ");
     scanf("%s", token);
-    data->email = malloc(strlen(token)*sizeof(char));
+    //data->email = malloc(strlen(token)*sizeof(char));
     strcpy(data->email, token);
 
     printf("Įveskite tel. nr.: ");
     scanf("%s", token);
-    data->phone = malloc(strlen(token)*sizeof(char));
+    //data->phone = malloc(strlen(token)*sizeof(char));
     strcpy(data->phone, token);
 
-
-    displayNode(data);
     if(index == -1)
-        addToEnd(head,tail, data);
+        addToEnd(head, tail, data);
     else
-        printf("else");
-        //insertAtPosition(head, data, index);
+        insertAtPosition(head, tail, data, index);
 }
 
-void displaySearchOptions(struct Node* head)
+void displaySearchOptions(struct Node* head, struct Node* tail)
 {
-    while(1)
+    while(signalStop!=0)
     {
         int option;
         char* enteredValue;
@@ -114,22 +117,22 @@ void displaySearchOptions(struct Node* head)
         case 1:
             printf("Įveskite vardą: ");
             scanf("%s", enteredValue);
-            foundElement = findByName(head, enteredValue);
+            foundElement = findByName(head, tail, enteredValue);
             break;
         case 2:
             printf("Įveskite pavardę: ");
             scanf("%s", enteredValue);
-            foundElement = findBySurname(head, enteredValue);
+            foundElement = findBySurname(head, tail, enteredValue);
             break;
         case 3:
             printf("Įveskite el. paštą: ");
             scanf("%s",enteredValue);
-            foundElement = findByEmail(head, enteredValue);
+            foundElement = findByEmail(head, tail, enteredValue);
             break;
         case 4:
             printf("Įveskite tel. numerį: ");
             scanf("%s", enteredValue);
-            foundElement = findByPhone(head, enteredValue);
+            foundElement = findByPhone(head, tail, enteredValue);
             break;
         case 5:
             return;
@@ -142,17 +145,17 @@ void displaySearchOptions(struct Node* head)
         if(foundElement !=NULL)
             if(foundElement!=NULL)
                 displayNode(foundElement);
+        free(foundElement);
     }
 }
  
 void displayOptions(struct Node* head, struct Node* tail)
 {
     printf("ADRESŲ KNYGELĖ\n");
-    while(1)
+    while(signalStop!=0)
     {
         int option;
         int index;
-        struct Node data;
         struct Node* foundElement = malloc(sizeof(struct Node));
         printf("1. Peržiūrėti visą sąrašą\n");
         printf("2. Pridėti naują kontaktą į galą\n");
@@ -167,7 +170,7 @@ void displayOptions(struct Node* head, struct Node* tail)
         switch(option)
         {
             case 1:
-                display(head, tail, 10);
+                display(head, tail, -1);
                 awaitUserPrompt();
                 break;
             case 2:
@@ -184,7 +187,7 @@ void displayOptions(struct Node* head, struct Node* tail)
             case 4:
                 printf("Įveskite indeksą: ");
                 scanf("%d",&index);
-                removeAtPosition(head, index);
+                removeAtPosition(head, tail, index);
                 awaitUserPrompt();
                 break;
             case 5:
@@ -194,16 +197,17 @@ void displayOptions(struct Node* head, struct Node* tail)
             case 6:
                 printf("Įveskite indeksą: ");
                 scanf("%d",&index);
-                foundElement = findByIndex(head, index);
+                foundElement = findByIndex(head, tail, index);
                 if(foundElement != NULL)
                     displayNode(foundElement);
                 awaitUserPrompt();
                 break;
             case 7:
-                displaySearchOptions(head);
+                displaySearchOptions(head, tail);
                 break;
             case 8:
                 deleteWholeList(head, tail);
+                free(foundElement);
                 return;
             default:
                 printf("Įvyko klaida. bandykite dar kartą.\n");
@@ -211,6 +215,7 @@ void displayOptions(struct Node* head, struct Node* tail)
                 awaitUserPrompt();
                 break;
         }
+        free(foundElement);
     }
 }
  

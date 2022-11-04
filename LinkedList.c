@@ -1,11 +1,11 @@
 #include "LinkedList.h"
 
 
-void init_list(struct Node **first, struct Node **last)
+void init_list(struct Node **head, struct Node **tail)
 {
-   *first = malloc(sizeof(struct Node));
-   *last = malloc(sizeof(struct Node));
-   (*first)->next = *last;
+   *head = malloc(sizeof(struct Node));
+   *tail = malloc(sizeof(struct Node));
+   (*head)->next = *tail;
 }
 
 void displayNode(struct Node* node)
@@ -39,10 +39,9 @@ void display(struct Node* head, struct Node* tail, int number)
 }
  
  
-void addToEnd(struct Node* first, struct Node *last, struct Node *data)
+void addToEnd(struct Node* first, struct Node *last, struct Node* data)
 {
-
-    struct Node *curr = first;
+   struct Node *curr = first;
    while (curr->next != last)
    {
       curr = curr->next;
@@ -61,17 +60,17 @@ void insertAtPosition(struct Node* head, struct Node* tail, struct Node* data, i
     else
     {
         struct Node* current = head;
-        if(current == NULL)
+        if(current->next == tail)
             printf("Sąrašas tuščias");
 
         for(int i = 0; i < position-1; i++)
         {
-            if(current -> next == NULL)
+            if(current -> next == tail)
                 break;
             current = current->next;
         }
 
-        if(current -> next == NULL)
+        if(current -> next == tail)
             addToEnd(head,tail, data);
         else
         {
@@ -84,7 +83,7 @@ void insertAtPosition(struct Node* head, struct Node* tail, struct Node* data, i
 }
  
  
-void removeAtPosition(struct Node* head, int position)
+void removeAtPosition(struct Node* head, struct Node* tail, int position)
 {
     struct Node* temp = head; 
     int i;
@@ -93,18 +92,11 @@ void removeAtPosition(struct Node* head, int position)
         printf("Įvestas neteisingas indeksas\n");
         return;
     }
-    if(position == 1) {
-        head = head->next; 
-        temp->next = NULL;
-        free(temp);
-        printf("Sėkmingai panaikinta\n");
-        return;
-    }
     else
     {
         for (i = 1; i < position; i++)
         {
-            if(temp -> next != NULL)
+            if(temp -> next != tail)
                 temp = temp->next;
             else
             {
@@ -120,7 +112,7 @@ void removeAtPosition(struct Node* head, int position)
     }
 }
 
-struct Node* findByEmail(struct Node* head, char* email)
+struct Node* findByEmail(struct Node* head, struct Node* tail, char* email)
 {
     struct Node* temp = head;
     if(temp == NULL)
@@ -128,7 +120,7 @@ struct Node* findByEmail(struct Node* head, char* email)
         printf("Sąrašas tuščias\n");
         return NULL;
     }
-    while(temp->next != NULL)
+    while(temp->next != tail)
     {
         temp = temp->next;
         if(strcmp(temp->email, email) == 0)
@@ -138,7 +130,7 @@ struct Node* findByEmail(struct Node* head, char* email)
     return NULL;
 }
 
-struct Node* findByPhone(struct Node* head, char* phone)
+struct Node* findByPhone(struct Node* head, struct Node* tail, char* phone)
 {
     struct Node* temp = head;
     if(temp == NULL)
@@ -146,7 +138,7 @@ struct Node* findByPhone(struct Node* head, char* phone)
         printf("Sąrašas tuščias\n");
         return NULL;
     }
-    while(temp->next != NULL)
+    while(temp->next != tail)
     {
         temp = temp->next;
         if(strcmp(temp->phone, phone) == 0)
@@ -156,7 +148,7 @@ struct Node* findByPhone(struct Node* head, char* phone)
     return NULL;
 }
 
-struct Node* findByName(struct Node* head, char* name)
+struct Node* findByName(struct Node* head, struct Node* tail, char* name)
 {
     struct Node* temp = head;
     if(temp == NULL)
@@ -164,7 +156,7 @@ struct Node* findByName(struct Node* head, char* name)
         printf("Sąrašas tuščias\n");
         return NULL;
     }
-    while(temp->next != NULL)
+    while(temp->next != tail)
     {
         temp = temp->next;
         if(strcmp(temp->name, name) == 0)
@@ -174,7 +166,7 @@ struct Node* findByName(struct Node* head, char* name)
     return NULL;
 }
 
-struct Node* findBySurname(struct Node* head, char* surname)
+struct Node* findBySurname(struct Node* head, struct Node* tail, char* surname)
 {
     struct Node* temp = head;
     if(temp->next == tail)
@@ -182,7 +174,7 @@ struct Node* findBySurname(struct Node* head, char* surname)
         printf("Sąrašas tuščias\n");
         return NULL;
     }
-    while(temp->next != NULL)
+    while(temp->next != tail)
     {
         temp = temp->next;
         if(strcmp(temp->surname, surname) == 0)
@@ -192,9 +184,9 @@ struct Node* findBySurname(struct Node* head, char* surname)
     return NULL;
 }
  
-struct Node* findByIndex(struct Node* head, int index)
+struct Node* findByIndex(struct Node* head, struct Node* tail, int index)
 {
-    if(head == NULL)
+    if(head->next == tail)
     {
         printf("Sąrašas yra tuščias\n");
         return NULL;
@@ -209,7 +201,7 @@ struct Node* findByIndex(struct Node* head, int index)
         struct Node* temp = head;
         for(int i = 0; i < index; i++)
         {   
-            if(temp -> next != NULL)
+            if(temp -> next != tail)
                temp = temp -> next;
             else
             {
@@ -222,11 +214,15 @@ struct Node* findByIndex(struct Node* head, int index)
 }
  
 void deleteWholeList(struct Node* head, struct Node* tail)
-{
-struct Node* to_delete = head;
-    while (head != tail) {
-        head = head->next;
-        free(to_delete);
-        to_delete = head;
+{   
+    if(head->next != tail)
+    {
+    struct Node* current = head->next;
+    while (current->next != tail) {
+        struct Node* temp = current;
+        current = current -> next;
+        free(temp); 
+    }
+    head -> next = tail;
     }
 }
