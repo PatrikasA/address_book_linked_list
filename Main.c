@@ -6,7 +6,7 @@
 #include "LinkedList.h"
 
  
-void enterData(struct Node* head, int index);
+void enterData(struct Node** head, int index);
 void displayOptions(struct Node** head);
 void displaySearchOptions(struct Node* head);
 void awaitUserPrompt();
@@ -61,7 +61,7 @@ void inputDataFromFile(struct Node** head)
     fclose(file);
 }
 
-void enterData(struct Node* head, int index)
+void enterData(struct Node** head, int index)
 {
     char token[40];
     struct Node* data = malloc(sizeof(struct Node));
@@ -83,9 +83,9 @@ void enterData(struct Node* head, int index)
     strcpy(data->phone, token);
 
     if(index == -1)
-        addToEnd(&head, data);
+        addToEnd(head, data);
     else
-        insertAtPosition(&head, data, index);
+        insertAtPosition(head, data, index);
 }
 
 void displaySearchOptions(struct Node* head)
@@ -163,14 +163,14 @@ void displayOptions(struct Node** head)
                 awaitUserPrompt();
                 break;
             case 2:
-                enterData(*head, -1);
+                enterData(head, -1);
                 awaitUserPrompt();
                 break;
             case 3:
                 printf("Įveskite indeksą: ");
                 scanf("%d", &index);
                 if(index > 0)
-                enterData(*head, index);
+                enterData(head, index);
                 awaitUserPrompt();
                 break;                
             case 4:

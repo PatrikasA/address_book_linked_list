@@ -231,7 +231,10 @@ void deleteWholeList(struct Node *list)
     while (list != NULL) {
         list = list->next;
         if(to_delete !=NULL)
+        {
+            to_delete -> next = NULL;
             free(to_delete);
+        }
         to_delete = NULL;
         to_delete = list;
     }
