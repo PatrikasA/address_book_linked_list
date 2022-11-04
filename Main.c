@@ -46,19 +46,15 @@ void inputDataFromFile(struct Node* head, struct Node* tail)
         fscanf(file, "%s", buffer);
 
         token = strtok(buffer, ";");
-        //data->name = malloc(strlen(token)*sizeof(char));
         strcpy(data->name, token);
 
         token = strtok(NULL, ";");  
-        //data->surname = malloc(strlen(token)*sizeof(char));
         strcpy(data->surname, token);
 
         token = strtok(NULL, ";");
-        //data->email = malloc(strlen(token)*sizeof(char));
         strcpy(data->email, token);
 
         token = strtok(NULL, ";");
-        //data->phone = malloc(strlen(token)*sizeof(char));
         strcpy(data->phone, token);
 
         data->next=NULL;
@@ -69,27 +65,23 @@ void inputDataFromFile(struct Node* head, struct Node* tail)
 
 void enterData(struct Node* head, struct Node* tail, int index)
 {
-    char token[20];
+    char token[40];
     struct Node* data = malloc(sizeof(struct Node));
 
     printf("Įveskite vardą: ");
     scanf("%s", token);
-    //data->name = malloc(strlen(token)*sizeof(char));
     strcpy(data->name, token);
 
     printf("Įveskite pavardę: ");
     scanf("%s", token);
-    //data->surname = malloc(strlen(token)*sizeof(char));
     strcpy(data->surname, token);
 
     printf("Įveskite el. paštą: ");
     scanf("%s", token);
-    //data->email = malloc(strlen(token)*sizeof(char));
     strcpy(data->email, token);
 
     printf("Įveskite tel. nr.: ");
     scanf("%s", token);
-    //data->phone = malloc(strlen(token)*sizeof(char));
     strcpy(data->phone, token);
 
     if(index == -1)

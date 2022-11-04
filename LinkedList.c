@@ -107,6 +107,7 @@ void removeAtPosition(struct Node* head, struct Node* tail, int position)
         struct Node* del = temp->next;
         temp->next = temp->next->next;
         free(del);
+        del = NULL;
         printf("Sėkmingai panaikinta\n");
         return;
     }
@@ -221,7 +222,8 @@ void deleteWholeList(struct Node* head, struct Node* tail)
     while (current->next != tail) {
         struct Node* temp = current;
         current = current -> next;
-        free(temp); 
+        free(temp);
+        temp = NULL; 
     }
     head -> next = tail;
     }
