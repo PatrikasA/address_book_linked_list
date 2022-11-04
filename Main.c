@@ -9,7 +9,7 @@
 void enterData();
 void displayOptions();
 void awaitUserPrompt();
-void inputDataFromFile(struct Node* head);
+void inputDataFromFile(struct Node* head, struct Node* tail);
 int signalStop = 1;
 
 void sig_handler(int signum)
@@ -20,17 +20,15 @@ void sig_handler(int signum)
 
 int main()
 {
-    struct Node list;
-    list.next = NULL;
+    struct Node *head, *tail;
+    init_list(&head, &tail);
     signal(SIGINT, sig_handler);
-    //inputDataFromFile(&list);
-    printf("CIA YRA PIRMAS ELELEMTAS HEAD ");
-    //displayNode(&list);
-    display(&list, 10);
-    displayOptions(&list);
+    //inputDataFromFile(head,tail);
+    display(head,tail, 10);
+    displayOptions(head,tail);
 }
 
-void inputDataFromFile(struct Node* head)
+void inputDataFromFile(struct Node* head, struct Node* tail)
 {
     char *token;
     char buffer[255];
@@ -59,11 +57,11 @@ void inputDataFromFile(struct Node* head)
         strcpy(data->phone, token);
 
         data->next=NULL;
-        addToEnd(head, data);
+        addToEnd(head, tail, data);
     }
 }
 
-void enterData(struct Node* head, int index)
+void enterData(struct Node* head, struct Node* tail, int index)
 {
     char token[20];
     struct Node* data = malloc(sizeof(struct Node));
@@ -88,10 +86,13 @@ void enterData(struct Node* head, int index)
     data->phone = malloc(strlen(token)*sizeof(char));
     strcpy(data->phone, token);
 
+
+    displayNode(data);
     if(index == -1)
-        addToEnd(head, data);
+        addToEnd(head,tail, data);
     else
-        insertAtPosition(head, data, index);
+        printf("else");
+        //insertAtPosition(head, data, index);
 }
 
 void displaySearchOptions(struct Node* head)
@@ -144,7 +145,7 @@ void displaySearchOptions(struct Node* head)
     }
 }
  
-void displayOptions(struct Node* head)
+void displayOptions(struct Node* head, struct Node* tail)
 {
     printf("ADRESŲ KNYGELĖ\n");
     while(1)
@@ -166,18 +167,18 @@ void displayOptions(struct Node* head)
         switch(option)
         {
             case 1:
-                display(head, -1);
+                display(head, tail, 10);
                 awaitUserPrompt();
                 break;
             case 2:
-                enterData(head, -1);
+                enterData(head,tail, -1);
                 awaitUserPrompt();
                 break;
             case 3:
                 printf("Įveskite indeksą: ");
                 scanf("%d", &index);
                 if(index > 0)
-                enterData(head, index);
+                enterData(head, tail, index);
                 awaitUserPrompt();
                 break;                
             case 4:
@@ -187,7 +188,7 @@ void displayOptions(struct Node* head)
                 awaitUserPrompt();
                 break;
             case 5:
-                deleteWholeList(head);
+                deleteWholeList(head, tail);
                 awaitUserPrompt();
                 break;
             case 6:
@@ -202,7 +203,7 @@ void displayOptions(struct Node* head)
                 displaySearchOptions(head);
                 break;
             case 8:
-                deleteWholeList(head);
+                deleteWholeList(head, tail);
                 return;
             default:
                 printf("Įvyko klaida. bandykite dar kartą.\n");

@@ -1,13 +1,21 @@
 #include "LinkedList.h"
 
+
+void init_list(struct Node **first, struct Node **last)
+{
+   *first = malloc(sizeof(struct Node));
+   *last = malloc(sizeof(struct Node));
+   (*first)->next = *last;
+}
+
 void displayNode(struct Node* node)
 {
     printf("%s %s %s %s\n",node->name, node->surname, node->phone, node->email);
 }
- 
-void display(struct Node* head, int number)
+
+void display(struct Node* head, struct Node* tail, int number)
 {
-    if(head == NULL)
+    if(head->next == tail)
     {
         printf("Adresu knygele tuscia\n");
     }
@@ -17,7 +25,7 @@ void display(struct Node* head, int number)
         int i = 1; //used to display indexes
         int j = 0; //used to display a limited number of entries
         printf("Sąrašo elementai:\n");
-        while(current->next!=NULL)
+        while(current->next!=tail)
         {
             if(number != -1 && j >= number)
                 return;
@@ -31,27 +39,20 @@ void display(struct Node* head, int number)
 }
  
  
-void addToEnd(struct Node* head, struct Node* data)
+void addToEnd(struct Node* first, struct Node *last, struct Node *data)
 {
-    if(head == NULL)
-    {
-        head = (struct Node *)malloc(sizeof(struct Node));
-        head = data;
-        head -> next = NULL;
-        return;
-    }
-    struct Node* current = head;
-    while(current -> next != NULL)
-    {
-        current = current ->next;
-    }
-    
-    current -> next = malloc(sizeof(struct Node));
-    current -> next = data;
-    current -> next -> next = NULL;
+
+    struct Node *curr = first;
+   while (curr->next != last)
+   {
+      curr = curr->next;
+   }
+   curr->next = malloc(sizeof(struct Node));
+   curr->next = data;
+   curr->next->next = last;
 }
  
-void insertAtPosition(struct Node* head, struct Node* data, int position)
+void insertAtPosition(struct Node* head, struct Node* tail, struct Node* data, int position)
 {
     if(position <= 0)
     {
@@ -71,7 +72,7 @@ void insertAtPosition(struct Node* head, struct Node* data, int position)
         }
 
         if(current -> next == NULL)
-            addToEnd(head, data);
+            addToEnd(head,tail, data);
         else
         {
             struct Node* temp = current -> next;
@@ -176,7 +177,7 @@ struct Node* findByName(struct Node* head, char* name)
 struct Node* findBySurname(struct Node* head, char* surname)
 {
     struct Node* temp = head;
-    if(temp == NULL)
+    if(temp->next == tail)
     {
         printf("Sąrašas tuščias\n");
         return NULL;
@@ -220,12 +221,12 @@ struct Node* findByIndex(struct Node* head, int index)
     }
 }
  
-void deleteWholeList(struct Node* head)
+void deleteWholeList(struct Node* head, struct Node* tail)
 {
 struct Node* to_delete = head;
-    while (head != NULL) {
+    while (head != tail) {
         head = head->next;
-        free(to_delete->next);
+        free(to_delete);
         to_delete = head;
     }
 }
