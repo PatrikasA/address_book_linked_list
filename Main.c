@@ -6,16 +6,16 @@
 #include "LinkedList.h"
 
  
-void enterData(struct Node** head, int index);
-void displayOptions(struct Node** head);
-void displaySearchOptions(struct Node* head);
-void awaitUserPrompt();
-void inputDataFromFile(struct Node** head);
-volatile int signalStop = 1;
+void enter_data(struct Node** head, int index);
+void display_options(struct Node** head);
+void display_search_options(struct Node* head);
+void await_user_prompt();
+void input_data_from_file(struct Node** head);
+volatile int signal_stop = 1;
 
 void sig_handler(int signum)
 {
-    signalStop = 0;
+    signal_stop = 0;
     fclose(stdin);
 }
 
@@ -25,19 +25,22 @@ int main()
 
     struct Node* head=NULL;
     //head = (struct Node *)malloc(sizeof(struct Node));
-    inputDataFromFile(&head);
+    input_data_from_file(&head);
     display(head, 10);
-    displayOptions(&head);
-    deleteWholeList(head);
+    display_options(&head);
+    delete_whole_list(head);
 }
 
-void inputDataFromFile(struct Node** head)
+void input_data_from_file(struct Node** head)
 {
     char *token;
     char buffer[255];
 
     FILE *file = fopen("duom.txt", "r");
-
+    if(file==NULL){
+        printf("Nepavyko atverti duomenų failo\n");
+        return;
+    }
     for(int i=0; i<12; i++)
     {
         struct Node* data = (struct Node *)malloc(sizeof(struct Node));
@@ -56,12 +59,12 @@ void inputDataFromFile(struct Node** head)
         strcpy(data->phone, token);
 
         data->next=NULL;
-        addToEnd(head, data);
+        add_to_end(head, data);
     }
     fclose(file);
 }
 
-void enterData(struct Node** head, int index)
+void enter_data(struct Node** head, int index)
 {
     char token[40];
     struct Node* data = malloc(sizeof(struct Node));
@@ -83,18 +86,18 @@ void enterData(struct Node** head, int index)
     strcpy(data->phone, token);
 
     if(index == -1)
-        addToEnd(head, data);
+        add_to_end(head, data);
     else
-        insertAtPosition(head, data, index);
+        insert_at_position(head, data, index);
 }
 
-void displaySearchOptions(struct Node* head)
+void display_search_options(struct Node* head)
 {
-    while(signalStop!=0)
+    while(signal_stop!=0)
     {
         int option;
-        char* enteredValue;
-        struct Node* foundElement = NULL;
+        char* entered_value;
+        struct Node* found_element = NULL;
         printf("1. Rasti pagal vardą\n");
         printf("2. Rasti pagal pavardę\n");
         printf("3. Rasti pagal el. paštą\n");
@@ -106,46 +109,46 @@ void displaySearchOptions(struct Node* head)
         {
         case 1:
             printf("Įveskite vardą: ");
-            scanf("%s", enteredValue);
-            foundElement = findByName(head, enteredValue);
+            scanf("%s", entered_value);
+            found_element = find_by_name(head, entered_value);
             break;
         case 2:
             printf("Įveskite pavardę: ");
-            scanf("%s", enteredValue);
-            foundElement = findBySurname(head, enteredValue);
+            scanf("%s", entered_value);
+            found_element = find_by_surname(head, entered_value);
             break;
         case 3:
             printf("Įveskite el. paštą: ");
-            scanf("%s",enteredValue);
-            foundElement = findByEmail(head, enteredValue);
+            scanf("%s",entered_value);
+            found_element = find_by_email(head, entered_value);
             break;
         case 4:
             printf("Įveskite tel. numerį: ");
-            scanf("%s", enteredValue);
-            foundElement = findByPhone(head, enteredValue);
+            scanf("%s", entered_value);
+            found_element = find_by_phone(head, entered_value);
             break;
         case 5:
             return;
         default:
         printf("Įvyko klaida, bandykite dar kartą\n");
         getchar();
-        awaitUserPrompt();
+        await_user_prompt();
             break;
         }
-        if(foundElement !=NULL)
-            if(foundElement!=NULL)
-                displayNode(foundElement);
+        if(found_element !=NULL)
+            if(found_element!=NULL)
+                display_node(found_element);
     }
 }
  
-void displayOptions(struct Node** head)
+void display_options(struct Node** head)
 {
     printf("ADRESŲ KNYGELĖ\n");
-    while(signalStop!=0)
+    while(signal_stop!=0)
     {
         int option;
         int index;
-        struct Node* foundElement = NULL;
+        struct Node* found_element = NULL;
         printf("1. Peržiūrėti visą sąrašą\n");
         printf("2. Pridėti naują kontaktą į galą\n");
         printf("3. Įterpti pagal poziciją\n");
@@ -160,55 +163,55 @@ void displayOptions(struct Node** head)
         {
             case 1:
                 display(*head, -1);
-                awaitUserPrompt();
+                await_user_prompt();
                 break;
             case 2:
-                enterData(head, -1);
-                awaitUserPrompt();
+                enter_data(head, -1);
+                await_user_prompt();
                 break;
             case 3:
                 printf("Įveskite indeksą: ");
                 scanf("%d", &index);
                 if(index > 0)
-                enterData(head, index);
-                awaitUserPrompt();
+                enter_data(head, index);
+                await_user_prompt();
                 break;                
             case 4:
                 printf("Įveskite indeksą: ");
                 scanf("%d",&index);
-                removeAtPosition(head, index);
-                awaitUserPrompt();
+                remove_at_position(head, index);
+                await_user_prompt();
                 break;
             case 5:
-                deleteWholeList(*head);
+                delete_whole_list(*head);
                 *head=NULL;
-                awaitUserPrompt();
+                await_user_prompt();
                 break;
             case 6:
                 printf("Įveskite indeksą: ");
                 scanf("%d",&index);
-                foundElement = findByIndex(*head, index);
-                if(foundElement != NULL)
-                    displayNode(foundElement);
-                awaitUserPrompt();
+                found_element = find_by_index(*head, index);
+                if(found_element != NULL)
+                    display_node(found_element);
+                await_user_prompt();
                 break;
             case 7:
-                displaySearchOptions(*head);
+                display_search_options(*head);
                 break;
             case 8:
-                free(foundElement);
+                free(found_element);
                 return;
             default:
                 printf("Įvyko klaida. bandykite dar kartą.\n");
                 getchar();
-                awaitUserPrompt();
+                await_user_prompt();
                 break;
         }
     }
 }
  
  
-void awaitUserPrompt()
+void await_user_prompt()
 {
     printf("Spauskite 'Enter' kad tęsti darbą\n");
     getchar();

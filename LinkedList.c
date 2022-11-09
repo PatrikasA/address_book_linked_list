@@ -1,6 +1,6 @@
 #include "LinkedList.h"
 
-void displayNode(struct Node* node)
+void display_node(struct Node* node)
 {
     if(node == NULL)
         printf("Klaida\n");
@@ -10,12 +10,10 @@ void displayNode(struct Node* node)
 
 void display(struct Node* head, int number)
 {
-    if(head==NULL)
-    {
+    if(head==NULL){
         printf("Adresu knygele tuscia\n");
     }
-    else
-    {
+    else{
         int i = 1; //used to display indexes
         int j = 0; //used to display a limited number of entries
         printf("Sąrašo elementai:\n");
@@ -24,7 +22,7 @@ void display(struct Node* head, int number)
             if(number != -1 && j >= number)
                 return;
             printf("%d. ",i);
-            displayNode(head);
+            display_node(head);
             head=head->next;
             i++;
             j++;
@@ -33,7 +31,7 @@ void display(struct Node* head, int number)
 }
  
  
-void addToEnd(struct Node** head, struct Node* data)
+void add_to_end(struct Node** head, struct Node* data)
 {
 
     struct Node* temp = *head;
@@ -47,16 +45,14 @@ void addToEnd(struct Node** head, struct Node* data)
     temp->next = data;
 }
  
-void insertAtPosition(struct Node** head, struct Node* data, int position)
+void insert_at_position(struct Node** head, struct Node* data, int position)
 {
-    displayNode(data);
-    if(position <= 0)
-    {
+    display_node(data);
+    if(position <= 0){
         printf("Ivestas neteisingas indeksas\n");
         return;
     }
-    else if(position == 1)
-    {
+    else if(position == 1){
         data -> next = *head;
         *head = data;
         return;
@@ -69,21 +65,19 @@ void insertAtPosition(struct Node** head, struct Node* data, int position)
         temp = temp -> next;
         i++;
     }
-    if(temp == NULL)
-    {
-        addToEnd(head, data);
+    if(temp == NULL){
+        add_to_end(head, data);
     }
-    else
-    {
-    struct Node *newTemp = temp -> next;
-    temp -> next = data;
-    data -> next = newTemp;
+    else{
+        struct Node *newTemp = temp -> next;
+        temp -> next = data;
+        data -> next = newTemp;
     }
 
 }
  
  
-void removeAtPosition(struct Node** head, int position)
+void remove_at_position(struct Node** head, int position)
 {
     struct Node* temp = *head; 
     int i;
@@ -95,23 +89,20 @@ void removeAtPosition(struct Node** head, int position)
     else
     {
         struct Node* temp = *head;
-        if(position==1)
-        {
+        if(position==1){
             *head = (*head)->next;
 
             if(temp !=  NULL)
                 free(temp);
         }
-        else
-        {
+        else{
             int i = 0;
             while(i < (position-2) && temp != NULL)
             {
                 temp = temp -> next;
                 i++;
             }
-            if(temp == NULL)
-            {
+            if(temp == NULL){
                 printf("Įvestas indeksas per didelis\n");
                 return;
             }
@@ -128,11 +119,10 @@ void removeAtPosition(struct Node** head, int position)
     }
 }
 
-struct Node* findByEmail(struct Node* head, char* email)
+struct Node* find_by_email(struct Node* head, char* email)
 {
     struct Node* temp = head;
-    if(temp == NULL)
-    {
+    if(temp == NULL){
         printf("Sąrašas tuščias\n");
         return NULL;
     }
@@ -146,11 +136,10 @@ struct Node* findByEmail(struct Node* head, char* email)
     return NULL;
 }
 
-struct Node* findByPhone(struct Node* head, char* phone)
+struct Node* find_by_phone(struct Node* head, char* phone)
 {
     struct Node* temp = head;
-    if(temp == NULL)
-    {
+    if(temp == NULL){
         printf("Sąrašas tuščias\n");
         return NULL;
     }
@@ -164,11 +153,10 @@ struct Node* findByPhone(struct Node* head, char* phone)
     return NULL;
 }
 
-struct Node* findByName(struct Node* head, char* name)
+struct Node* find_by_name(struct Node* head, char* name)
 {
     struct Node* temp = head;
-    if(temp == NULL)
-    {
+    if(temp == NULL){
         printf("Sąrašas tuščias\n");
         return NULL;
     }
@@ -182,11 +170,10 @@ struct Node* findByName(struct Node* head, char* name)
     return NULL;
 }
 
-struct Node* findBySurname(struct Node* head, char* surname)
+struct Node* find_by_surname(struct Node* head, char* surname)
 {
     struct Node* temp = head;
-    if(temp == NULL)
-    {
+    if(temp == NULL){
         printf("Sąrašas tuščias\n");
         return NULL;
     }
@@ -200,20 +187,17 @@ struct Node* findBySurname(struct Node* head, char* surname)
     return NULL;
 }
  
-struct Node* findByIndex(struct Node* head, int index)
+struct Node* find_by_index(struct Node* head, int index)
 {
-    if(head==NULL)
-    {
+    if(head==NULL){
         printf("Sąrašas yra tuščias\n");
         return NULL;
     }
-    if(index < 1)
-    {
+    if(index < 1){
         printf("Įvestas neteisingas indeksas\n");
         return NULL;
     }
-    else
-    {
+    else{
         struct Node* temp = head;
         int i = 0;
         while(i < index && temp != NULL)
@@ -225,13 +209,12 @@ struct Node* findByIndex(struct Node* head, int index)
     }
 }
  
-void deleteWholeList(struct Node *list)
+void delete_whole_list(struct Node *list)
 {
     struct Node *to_delete = list;
     while (list != NULL) {
         list = list->next;
-        if(to_delete !=NULL)
-        {
+        if(to_delete !=NULL){
             to_delete -> next = NULL;
             free(to_delete);
         }
