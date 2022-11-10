@@ -24,7 +24,6 @@ int main()
     signal(SIGINT, sig_handler);
 
     struct Node* head=NULL;
-    //head = (struct Node *)malloc(sizeof(struct Node));
     input_data_from_file(&head);
     display(head, 10);
     display_options(&head);
@@ -96,7 +95,7 @@ void display_search_options(struct Node* head)
     while(signal_stop!=0)
     {
         int option;
-        char* entered_value;
+        char entered_value[30];
         struct Node* found_element = NULL;
         printf("1. Rasti pagal vardą\n");
         printf("2. Rasti pagal pavardę\n");
@@ -136,8 +135,7 @@ void display_search_options(struct Node* head)
             break;
         }
         if(found_element !=NULL)
-            if(found_element!=NULL)
-                display_node(found_element);
+            display_node(found_element);
     }
 }
  
